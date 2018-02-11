@@ -7,6 +7,18 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 def open_excel(file='test.xls'):
+    """
+    这个方法主要用于打开Excel文件，并返回Excel文件中的数据
+
+    :param file:
+
+      文件名（文件路径），默认为'test。xls'
+
+    :return:
+
+      返回Excel文件中的数据
+
+    """
     try:
         data = xlrd.open_workbook(file)  # 打开excel文件
         return data
@@ -14,7 +26,33 @@ def open_excel(file='test.xls'):
         print str(e)
 
 
-def excel_table_bycol(file='', where=[0], colindex=[0], table_name='Sheet1'):
+def excel_table_bycol(file, where=[0], colindex=[0], table_name='Sheet1'):
+    """
+    这个方法主要用于解析Excel文件中的数据
+
+    :param file:
+
+      这个参数用于传给打开Excel文件方法，为文件名（文件路径）
+
+    :param where:
+
+      这个参数where语句所需要的字段，为list类型，为Excel中对应的列
+
+    :param colindex:
+
+      这个参数为需要更新的字段，为list类型，为Excel中对应的列
+
+    :param table_name:
+
+      这个参数为Excel文件中工作表名，默认为'Sheet1''
+
+    :return:
+
+      返回一个list，其中包含一个list和一个str
+      list中为需要更新的字段和where语句的字段
+      str为表名
+
+    """
     data = open_excel(file)
     table = data.sheet_by_name(table_name)  # 获取excel里面的某一页
     nrows = table.nrows  # 获取行数
@@ -36,6 +74,22 @@ def excel_table_bycol(file='', where=[0], colindex=[0], table_name='Sheet1'):
 
 
 def main(file,where,colindex):
+    """
+    这个方法主要用于将Excel中获取的数据解析生成SQL语句
+
+    :param file:
+
+      这个参数用于传给获取Excel数据的方法，为文件名（文件路径）
+
+    :param where:
+
+      这个参数用于传给获取Excel数据的方法，为where语句所需要的字段，为list类型，为Excel中对应的列
+
+    :param colindex:
+
+      这个参数用于传给获取Excel数据的方法，为需要更新的字段，为list类型，为Excel中对应的列
+
+    """
     # colindex为需要更新的列，where为筛选的列
     tables = excel_table_bycol(file,where,colindex, table_name=u'Sheet1')
     with open('./sql_result/update#'+tables[1]+'.sql', 'w') as f:    # 创建sql文件，并开启写模式
